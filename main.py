@@ -1,12 +1,18 @@
-from fastapi import FastAPI
+from flask import Flask, request, jsonify
 
-app = FastAPI()
+app = Flask(__name__)
 
-@app.get("/chat")
-def chat(query: str):
-    return {"response": f"Your query was: {query}"}
+responses = {
+    "hello": "Hi! How can I help you?",
+    "how are you": "I'm just a bot, but I'm doing well!",
+    "bye": "Goodbye! Have a great day!"
+}
 
-# Running locally
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.route('/chat', methods=['GET'])
+def chat():
+    user_message = request.args.get('message', '').lower()
+    response = responses.get(user_message, "Sorry, I don't understand that.")
+    return jsonify({"response": response})
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000)
